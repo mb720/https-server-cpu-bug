@@ -1,0 +1,39 @@
+// The wrapper task generates gradlew(.bat) scripts.
+// Run "./gradlew wrapper" to upgrade Gradle.
+// Wrapper API: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.wrapper.Wrapper.html
+wrapper {
+    // https://docs.gradle.org/current/release-notes.html
+    gradleVersion = "5.4.1"
+    // Include Gradle documentation and source
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+// This is a runnable application: We can start it using gradlew run
+apply plugin: "application"
+apply plugin: "java"
+
+mainClassName = "com.bullbytes.simpleserver.Start"
+
+sourceCompatibility = 11
+
+// Define JVM options and system properties
+// Here's more on defining options: https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
+applicationDefaultJvmArgs +=
+        [
+        // Set the maximum Java heap size. Note that not all of that space is necessarily available to our
+        // application's objects. The VM, especially the garbage collector, might use some of it, too.
+        // See: http://hg.openjdk.java.net/jdk9/jdk9/hotspot/file/6dc8db7164d2/src/share/vm/gc_interface/collectedHeap.hpp#l234
+        "-Xmx2g"
+]
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Logging: https://www.slf4j.org/
+    // Binding for java.util.logging, also referred to as JDK 1.4 logging
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14
+    compile 'org.slf4j:slf4j-jdk14:1.8.0-beta4'
+
+}

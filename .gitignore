@@ -1,0 +1,13 @@
+# Gradle files
+.gradle
+
+# IntelliJ files
+*.iml
+*.ipr
+*.iws
+.idea
+.attach_pid*
+build
+
+out/
+
