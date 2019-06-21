@@ -22,7 +22,7 @@ But this will:
 
     curl -k https://localhost:8443/close
 
-This handler processing the request *does* close the stream to which we write the [request body](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.httpserver/com/sun/net/httpserver/HttpExchange.html#getResponseBody()). This will yield an HTTP response but the server becomes unresponsive afterwards due to high CPU load.
+This other handler processing the request *does* close the stream to which we write the [request body](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.httpserver/com/sun/net/httpserver/HttpExchange.html#getResponseBody()). This will yield an HTTP response but the server becomes unresponsive afterwards due to high CPU load.
 
 ## Platforms where the bug occurs
 * Arch Linux 5.1.7:
@@ -43,6 +43,7 @@ Also, using curl to connect to a regular HTTP server without TLS works fine:
 ## Findings from Java Flight Recorder
 ### Threads Allocating
 The thread performing the most allocation is likely 'HTTP-Dispatcher'. This is the most common allocation path for that class:
+
     SSLEngineImpl.writeRecord(ByteBuffer[], int, int, ByteBuffer[], int, int) (50.2 %)
     SSLEngineImpl.wrap(ByteBuffer[], int, int, ByteBuffer[], int, int)
     SSLEngineImpl.wrap(ByteBuffer[], int, int, ByteBuffer)
