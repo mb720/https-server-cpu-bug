@@ -8,6 +8,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -108,9 +109,10 @@ public enum Start {
     private static HttpHandler getHandlerNotClosingResponseBodyStream() {
         return exchange -> {
             try {
-                var responseBodyStream = exchange.getResponseBody();
+                OutputStream responseBodyStream = exchange.getResponseBody();
 
-                byte[] response = "Fine with HTTPS and curl\n".getBytes(StandardCharsets.UTF_8);
+                byte[] response = "Fine with HTTPS and curl\n"
+                        .getBytes(StandardCharsets.UTF_8);
 
                 exchange.getResponseHeaders().set("Content-Type", "plain");
 
@@ -127,9 +129,10 @@ public enum Start {
     private static HttpHandler getHandlerThatClosesResponseBodyStream() {
         return exchange -> {
             try {
-                var responseBodyStream = exchange.getResponseBody();
+                OutputStream responseBodyStream = exchange.getResponseBody();
 
-                byte[] response = "Trouble with HTTPS and curl\n".getBytes(StandardCharsets.UTF_8);
+                byte[] response = "Trouble with HTTPS and curl\n"
+                        .getBytes(StandardCharsets.UTF_8);
 
                 exchange.getResponseHeaders().set("Content-Type", "text/plain");
 
@@ -137,11 +140,12 @@ public enum Start {
 
                 responseBodyStream.write(response);
 
-                // From the docs: "In order to correctly terminate each exchange, the output stream must be closed,
-                // even if no response body is being sent."
+                // From the docs: "In order to correctly terminate each exchange, the
+                // output stream must be closed, even if no response body is being sent."
                 responseBodyStream.close();
 
-                // Note that exchange.close() also closes the exchange's input stream and output stream
+                // Note that exchange.close() also closes the exchange's input stream
+                // and output stream
 
             } catch (Exception e) {
                 log.warn("Could not handle request", e);

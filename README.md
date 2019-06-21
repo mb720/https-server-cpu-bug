@@ -29,7 +29,7 @@ But this will:
 
     curl -k https://localhost:8443/close
 
-This other handler processing the request *does* close the stream to which we write the [request body](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.httpserver/com/sun/net/httpserver/HttpExchange.html#getResponseBody()). This will yield an HTTP response but the server becomes unresponsive afterwards due to high CPU load.
+This other handler processing the request *does* close the stream. This will yield an HTTP response but the server becomes unresponsive afterwards due to high CPU load.
 
 ## Platforms where the bug occurs
 * Arch Linux 5.1.7:
@@ -47,7 +47,7 @@ Also, using curl to connect to a regular HTTP server without TLS works fine:
     ./gradlew run --args="--no-tls"
     curl http://localhost:8443/close
 
-## Findings from [Java Flight Recorder](https://en.wikipedia.org/wiki/JDK_Flight_Recorder) (JFR)
+## Findings from [JDK Flight Recorder](https://en.wikipedia.org/wiki/JDK_Flight_Recorder) (JFR)
 [Directory](https://github.com/mb720/https-server-cpu-bug/tree/master/jfr) with performance data gathered from JFR after calling `curl -k https://localhost:8443/close`.
 
 [Instructions](https://stackoverflow.com/questions/36483804/where-to-find-java-mission-control-and-visualvm-on-ubuntu-openjdk8#51167724) to get JFR.
