@@ -40,7 +40,7 @@ Also, using curl to connect to a regular HTTP server without TLS works fine:
     ./gradlew run --args="--no-tls"
     curl http://localhost:8443/close
 
-## Findings from Java Flight Recorder
+## Findings from [Java Flight Recorder](https://github.com/mb720/https-server-cpu-bug/tree/master/jfr)
 ### Threads Allocating
 The thread performing the most allocation is likely 'HTTP-Dispatcher'. This is the most common allocation path for that class:
 
