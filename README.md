@@ -31,19 +31,20 @@ But this will:
 
 This other handler processing the request *does* close the stream. This will yield an HTTP response but the server becomes unresponsive afterwards due to high CPU load.
 
+
 # Workaround
 
 As helpfully suggested [here](https://stackoverflow.com/questions/56708300/httpsserver-causes-100-cpu-load-with-curl#56720340), there's a workaround for this JDK bug:
 
     applicationDefaultJvmArgs += [ "-Djdk.tls.acknowledgeCloseNotify=true" ]
 
-## Platforms where the bug occurs
+# Platforms where the bug occurs
 * Arch Linux 5.1.7:
   * OpenJDK 12.0.1+12
   * OpenJDK 11.0.4+7
   * OpenJDK 11.0.3+4
 
-## What works
+# What works
 High CPU load does not occur when connecting to the HTTPS server using a browser (you'll have to accept the self-signed certificate first):
 
     firefox https://localhost:8443/close
@@ -53,12 +54,12 @@ Also, using curl to connect to a regular HTTP server without TLS works fine:
     ./gradlew run --args="--no-tls"
     curl http://localhost:8443/close
 
-## Findings from [JDK Flight Recorder](https://en.wikipedia.org/wiki/JDK_Flight_Recorder) (JFR)
+# Findings from [JDK Flight Recorder](https://en.wikipedia.org/wiki/JDK_Flight_Recorder) (JFR)
 [Directory](https://github.com/mb720/https-server-cpu-bug/tree/master/jfr) with performance data gathered from JFR after calling `curl -k https://localhost:8443/close`.
 
 [Instructions](https://stackoverflow.com/questions/36483804/where-to-find-java-mission-control-and-visualvm-on-ubuntu-openjdk8#51167724) to get JFR.
 
-### Threads Allocating
+## Threads Allocating
 The thread performing the most allocation is likely 'HTTP-Dispatcher'. This is the most common allocation path for that class:
 
     SSLEngineImpl.writeRecord(ByteBuffer[], int, int, ByteBuffer[], int, int) (50.2 %)
@@ -68,7 +69,7 @@ The thread performing the most allocation is likely 'HTTP-Dispatcher'. This is t
     SSLStreams$EngineWrapper.wrapAndSendX(ByteBuffer, boolean)
     SSLStreams.doClosure()
 
-### Allocated Classes
+## Allocated Classes
 The most allocated class is likely 'javax.net.ssl.SSLEngineResult'. This is the most common allocation path for that class:
 
     SSLEngineImpl.writeRecord(ByteBuffer[], int, int, ByteBuffer[], int, int) (100 %)
