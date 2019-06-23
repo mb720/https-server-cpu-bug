@@ -31,6 +31,12 @@ But this will:
 
 This other handler processing the request *does* close the stream. This will yield an HTTP response but the server becomes unresponsive afterwards due to high CPU load.
 
+# Workaround
+
+As helpfully suggested [here](https://stackoverflow.com/questions/56708300/httpsserver-causes-100-cpu-load-with-curl#56720340), there's a workaround for this JDK bug:
+
+    applicationDefaultJvmArgs += [ "-Djdk.tls.acknowledgeCloseNotify=true" ]
+
 ## Platforms where the bug occurs
 * Arch Linux 5.1.7:
   * OpenJDK 12.0.1+12

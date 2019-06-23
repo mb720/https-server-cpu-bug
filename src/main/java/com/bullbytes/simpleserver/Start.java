@@ -8,6 +8,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
@@ -102,6 +103,7 @@ public enum Start {
     private static <T extends HttpServer> T addHandlers(T server) {
         server.createContext("/open", getHandlerNotClosingResponseBodyStream());
         server.createContext("/close", getHandlerThatClosesResponseBodyStream());
+        server.createContext("/close_both", getHandlerThatClosesBothStreams());
         return server;
     }
 
@@ -119,6 +121,33 @@ public enum Start {
                 exchange.sendResponseHeaders(200, response.length);
 
                 responseBodyStream.write(response);
+
+            } catch (Exception e) {
+                log.warn("Could not handle request", e);
+            }
+        };
+    }
+
+    private static HttpHandler getHandlerThatClosesBothStreams() {
+        return exchange -> {
+            try {
+                OutputStream responseBodyStream = exchange.getResponseBody();
+                InputStream requestBodyStream = exchange.getRequestBody();
+
+                byte[] response = "Trouble with HTTPS and curl\n"
+                        .getBytes(StandardCharsets.UTF_8);
+
+                exchange.getResponseHeaders().set("Content-Type", "text/plain");
+
+                exchange.sendResponseHeaders(200, response.length);
+
+                responseBodyStream.write(response);
+
+                // From the docs: "In order to correctly terminate each exchange, the
+                // output stream must be closed, even if no response body is being sent."
+                requestBodyStream.close();
+                responseBodyStream.close();
+
 
             } catch (Exception e) {
                 log.warn("Could not handle request", e);

@@ -20,11 +20,11 @@ sourceCompatibility = 11
 // Here's more on defining options: https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
 applicationDefaultJvmArgs +=
         [
-        // Set the maximum Java heap size. Note that not all of that space is necessarily available to our
-        // application's objects. The VM, especially the garbage collector, might use some of it, too.
-        // See: http://hg.openjdk.java.net/jdk9/jdk9/hotspot/file/6dc8db7164d2/src/share/vm/gc_interface/collectedHeap.hpp#l234
-        "-Xmx2g"
-]
+                // Set the maximum Java heap size. Note that not all of that space is necessarily available to our
+                // application's objects. The VM, especially the garbage collector, might use some of it, too.
+                // See: http://hg.openjdk.java.net/jdk9/jdk9/hotspot/file/6dc8db7164d2/src/share/vm/gc_interface/collectedHeap.hpp#l234
+                "-Xmx2g"
+        ]
 
 repositories {
     mavenCentral()
